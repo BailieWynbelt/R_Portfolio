@@ -1,0 +1,82 @@
+# THE FOLLOWING CODE WAS WRITTEN USING THE PALMER_PENGUIN DATA SET WITHIN R USING TIDYVERSE
+# THE OVERALL GOAL OF THIS CODE IS TO GAIN A GENERAL OVERSIGHT OF THE DATA AND A PROFORM GENERAL ANALYSIS
+# THIS CODE UTILIZES THE FOLLOWING FUNCTIONS "hist", "plot", "for loop", "abline", "function", "mutate"
+
+# LOADING TIDYVERSE PACKAGE
+  
+ library(tidyverse)
+
+# LOADING THE PALMER PENGUINS DATA SET
+
+library(palmerpenguins)
+
+#NAMING THE PALMER PENGUINS DATA SET
+
+penguins_data <- penguins
+
+#GAINING A GENERAL OVERVIEW OF THE DATA SET
+
+head(penguins_data)
+tail(penguins_data)
+
+#CREATED A HISTOGRAM DISPLAYING THE FREQUENCY DISTRIBUTION OF BODY MASS OF THE PENGUINS. THIS CODE INCLUDES A LABELED X AND Y AXIS. THERE ARE ALSO LABELS INCLUDED 
+ON EACH BAR, AND A RED LINE DEMONSTRATING THE MEAN OF BODY MASS OF PENGUINS
+
+hist(penguins$body_mass_g,
+     xlab = "Body Mass of Penguins", 
+     ylab = "Frequency of Penguins", 
+     main = NULL, 
+     labels = TRUE)
+abline(v = mean(penguins$body_mass_g, na.rm = TRUE), col = "red")
+     
+#CREATED A SCATTERPLOT DISPLAYING THE CORRELATION BETWEEN FLIPPER LENGTH AND BILL LENGTH OF PENGUINS
+
+plot(x = penguins$flipper_length_mm, 
+     y =penguins$bill_length_mm,
+     xlab = "Flipper Length (mm)",
+     ylab = "Bill length (mm)",
+     main = "Scatter Plot of Flipper and Bill Length (mm)")
+
+#CODE CREATING A FUNCTION TO CONVERT MM TO CM 
+
+mm_to_cm <- function(mm = NULL){
+  cm <- mm/ 10
+  return(cm)
+}
+
+#CREATED A VECTOR TO TEST IF CREATED FUNCTION WORKS
+
+vec <- c(66, 39, 40, 2, 439, 0, 54)
+mm_to_cm(mm = vec)
+
+#CREATION OF A NEW DATA FRAME CALLED "PENGUINS_CM" FROM THE ORIGINAL DATA SET. THE FOLLOWING CODE UTILIZES THE PIPE FUNCTION TO RUN MULTIPLE LINES OF CODE SIMUTANULOUSLY. 
+BELOW THE CODE CREATES 3 NEW COLUMNS WITHIN THE NEW DATA FRAME ("PENGUINS_CM"), THE COLUMNS INCLUDE THE CONVERTED VERISON (MM --> CM) OF BILL_LENGTH, BILL_DEPTH, 
+AND FLIPPER_LENGTH. THIS WAS DONE UTILIZING THE FUNCTON CREATED ABOVE.
+
+penguins_cm <- penguins_data %>%
+  mutate(bill_length_cm = mm_to_cm(bill_length_mm)) %>%
+  mutate(bill_depth_cm = mm_to_cm(bill_depth_mm)) %>%
+  mutate(flipper_length_cm = mm_to_cm(flipper_length_mm))
+  
+ #CODE CREATING A FUNCTION TO CONVERT G TO KG  
+  
+  g_to_kg <- function(g = NULL){
+  kg <- g/1000
+  return(kg)
+}
+
+#CREATED A VECTOR TO TEST IF CREATED FUNCTION WORKS
+
+vec <- c(65, 34, 60, 4, 456, 0, 52)
+g_to_kg(g = vec)
+
+#CREATION OF A NEW COLUMN WITHIN THE PENGUINS_CM DATA FRAME. UTILIZATION OF A "FOR LOOP' TO CONVERT THE BODY MASS (g) COLUMN IN THE PENGUINS_DATA SET TO A BODY
+MASS (kg) COLUMN IN THE PENGUINS_CM DATA FRAME. THE "FOR LOOP" ALSO USED THE FUNCTION CONVERTING G TO KG THAT WAS CREATED EARLIER
+
+penguins_cm$body_mass_kg <- penguins_data$body_mass_g
+for (i in 1:nrow(penguins)){
+  penguins_cm$body_mass_kg[i] <- g_to_kg(penguins$body_mass_g[i])
+  
+ #CREATION OF A NEW DATA FRAME CONTAINING ONLY SPECIFIED ROWS
+ 
+ penguins2 <- select(penguins_cm, species, island, sex, year, bill_length_cm, bill_depth_cm, flipper_length_cm, body_mass_kg)
